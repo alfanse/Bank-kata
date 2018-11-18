@@ -1,31 +1,36 @@
 package com.alfanse.bank
 
+import java.lang.String.format
 import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.text.DecimalFormat
 
+private val summaryFormat = "%s||%s||%s||%s"
 
+private val currencyFormat = DecimalFormat("#0.00")
+
+private val dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
 class AccountSummary(val account: Account) {
-    val datePattern = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
     fun summary(): String {
         val transactions = account.transactions
         if(transactions.isEmpty()) {
-            return rowHeader()
+            return headerRow()
         }
 
         val rowsOldFirst = transactions.map { transaction ->
-            rowTransaction(transaction, datePattern)
+            summaryRow(transaction)
         }
+
         //newest transaction first
         val reversed = rowsOldFirst.reversed()
-        return rowHeader() + "\n" + reversed.joinToString("\n")
+        return headerRow() + "\n" + reversed.joinToString("\n")
     }
 
     /** date       || credit   || debit    || balance */
-    private fun rowHeader(): String {
-        return java.lang.String.format("%s||%s||%s||%s",
+    private fun headerRow(): String {
+        return format(summaryFormat,
                 padRight("date", 12),
                 padRight(" credit", 12),
                 padRight(" debit", 12),
@@ -33,46 +38,47 @@ class AccountSummary(val account: Account) {
         )
     }
 
-    private fun rowTransaction(transaction: Transaction, summaryDatePattern: DateTimeFormatter?): String {
+    private fun summaryRow(transaction: Transaction): String {
         val amount = transaction.amount
-        return java.lang.String.format("%s||%s||%s||%s",
-                    padRight(amount.date.format(summaryDatePattern), 12),
+        return format(summaryFormat,
+                    padRight(dateWhen(amount), 12),
                     padLeft(creditAmount(transaction, amount), 12),
                     padLeft(debitAmount(transaction, amount), 12),
                     padLeft(toCurrency(transaction.balance), 12)
             )
         }
 
-    private fun debitAmount(transaction: Transaction, amount: Amount): String {
-        var debit = ""
-        if (transaction.type == TransactionType.DEBIT) {
-            debit = toCurrency(amount.amount)
-        }
-        return debit
+    private fun dateWhen(amount: Amount) = dateFormat.format(amount.date)
 
+    private fun debitAmount(transaction: Transaction, amount: Amount): String {
+        return toCurrencyWhenType(transaction, amount, TransactionType.DEBIT)
     }
 
     private fun creditAmount(transaction: Transaction, amount: Amount): String {
+        return toCurrencyWhenType(transaction, amount, TransactionType.CREDIT)
+    }
+
+    private fun toCurrencyWhenType(transaction: Transaction, amount: Amount, requiredType: TransactionType): String {
         var credit = ""
-        if (transaction.type == TransactionType.CREDIT) {
+        if (transaction.type == requiredType) {
             credit = toCurrency(amount.amount)
         }
         return credit
     }
 
     private fun toCurrency(amount: BigDecimal): String {
-        return DecimalFormat("#0.00").format(amount)
+        return currencyFormat.format(amount)
     }
 
     private fun padLeft(message: String, width: Int): String {
-        return padding(width, message) + message
+        return pad(width, message) + message
     }
 
     private fun padRight(message: String, width: Int): String {
-        return message + padding(width, message)
+        return message + pad(width, message)
     }
 
-    private fun padding(width: Int, message: String): String {
+    private fun pad(width: Int, message: String): String {
         val padsRequired = width - message.length
         var padding = ""
         for (i in 1..padsRequired) {

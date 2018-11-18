@@ -21,7 +21,7 @@ class Account {
 
     private fun transact(transactionType: TransactionType, amount: Amount) {
         val newBalance = transactionType.apply(balance, amount)
-        this.balance = newBalance
+        this.balance = BigDecimal(newBalance.unscaledValue())
         transactions.add(Transaction(amount, transactionType, newBalance))
     }
 }
