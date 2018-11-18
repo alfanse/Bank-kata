@@ -19,13 +19,8 @@ class AccountSummary(val account: Account) {
             return headerRow()
         }
 
-        val rowsOldFirst = transactions.map { transaction ->
-            summaryRow(transaction)
-        }
-
-        //newest transaction first
-        val reversed = rowsOldFirst.reversed()
-        return headerRow() + "\n" + reversed.joinToString("\n")
+        return headerRow() + "\n" + transactions.reversed()
+                .joinToString("\n") { summaryRow(it) }
     }
 
     /** date       || credit   || debit    || balance */
