@@ -10,12 +10,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class AccountIntegrationTest {
+class AccountIntegrationTest {
 
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-
-    @Test
     /**
      * Given a client makes:
      * a deposit of 1000 on 10-01-2012
@@ -30,6 +28,7 @@ public class AccountIntegrationTest {
      * 13/01/2012 || 2000.00  ||          || 3000.00
      * 10/01/2012 || 1000.00  ||          || 1000.00
      */
+    @Test
     void accountActivity() {
         Account account = new Account();
         account.deposit(amount("10-01-2012", 1000 + ""));
@@ -45,7 +44,12 @@ public class AccountIntegrationTest {
         );
 
         String summary = new AccountSummary(account).summary();
-        System.out.println("summary = \n" + summary);
+        Assertions.assertThat(summary).isEqualTo(
+            "date        || credit     || debit      || balance    " + "\n" +
+            "14/01/2012  ||            ||     500.00 ||     2500.00" + "\n" +
+            "13/01/2012  ||    2000.00 ||            ||     3000.00" + "\n" +
+            "10/01/2012  ||    1000.00 ||            ||     1000.00"
+        );
     }
 
     @NotNull

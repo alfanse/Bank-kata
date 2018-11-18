@@ -5,11 +5,11 @@ import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.text.DecimalFormat
 
-private val summaryFormat = "%s||%s||%s||%s"
+private val summaryFormat = "%s||%s ||%s ||%s"
 
 private val currencyFormat = DecimalFormat("#0.00")
 
-private val dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+private val dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
 class AccountSummary(val account: Account) {
 
@@ -32,8 +32,8 @@ class AccountSummary(val account: Account) {
     private fun headerRow(): String {
         return format(summaryFormat,
                 padRight("date", 12),
-                padRight(" credit", 12),
-                padRight(" debit", 12),
+                padRight(" credit", 11),
+                padRight(" debit", 11),
                 padRight(" balance", 12)
         )
     }
@@ -42,8 +42,8 @@ class AccountSummary(val account: Account) {
         val amount = transaction.amount
         return format(summaryFormat,
                     padRight(dateWhen(amount), 12),
-                    padLeft(creditAmount(transaction, amount), 12),
-                    padLeft(debitAmount(transaction, amount), 12),
+                    padLeft(creditAmount(transaction, amount), 11),
+                    padLeft(debitAmount(transaction, amount), 11),
                     padLeft(toCurrency(transaction.balance), 12)
             )
         }

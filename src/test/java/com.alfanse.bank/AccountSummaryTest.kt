@@ -27,7 +27,7 @@ internal class AccountSummaryTest {
         val rows = summary.split("\n")
         Assertions.assertThat(rows).hasSize(2)
         Assertions.assertThat(rows.get(0)).isEqualTo(headerTxt)
-        Assertions.assertThat(rows.get(1)).isEqualTo("21-11-1234  ||      123.45||            ||      123.45")
+        Assertions.assertThat(rows.get(1)).isEqualTo("21/11/1234  ||     123.45 ||            ||      123.45")
     }
 
     @Test
@@ -40,6 +40,6 @@ internal class AccountSummaryTest {
         val rows = summary.split("\n")
         Assertions.assertThat(rows).hasSize(2)
         Assertions.assertThat(rows.get(0)).isEqualTo(headerTxt)
-        Assertions.assertThat(rows.get(1)).isEqualTo("21-11-1234  ||            ||      123.45||     -123.45")
+        Assertions.assertThat(rows.get(1)).isEqualTo("21/11/1234  ||            ||     123.45 ||     -123.45")
     }
 }
