@@ -1,6 +1,12 @@
-/target
-/.settings
-/.idea/
-.project
-.classpath
+# gradle
+build/
+.gradle/
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+# Cache of project
+.gradletasknamecache
+
+# intellij
+.idea/
 *.iml
+out/
