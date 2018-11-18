@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 import java.text.DecimalFormat
 
-private val summaryFormat = "%s||%s ||%s ||%s"
+private val summaryFormat = "%s || %s || %s || %s"
 
 private val currencyFormat = DecimalFormat("#0.00")
 
@@ -26,20 +26,20 @@ class AccountSummary(val account: Account) {
     /** date       || credit   || debit    || balance */
     private fun headerRow(): String {
         return format(summaryFormat,
-                padRight("date", 12),
-                padRight(" credit", 11),
-                padRight(" debit", 11),
-                padRight(" balance", 12)
+                padRight("date", 11),
+                padRight("credit", 10),
+                padRight("debit", 10),
+                padRight("balance", 11)
         )
     }
 
     private fun summaryRow(transaction: Transaction): String {
         val amount = transaction.amount
         return format(summaryFormat,
-                    padRight(dateWhen(amount), 12),
-                    padLeft(creditAmount(transaction, amount), 11),
-                    padLeft(debitAmount(transaction, amount), 11),
-                    padLeft(toCurrency(transaction.balance), 12)
+                    padRight(dateWhen(amount), 11),
+                    padLeft(creditAmount(transaction, amount), 10),
+                    padLeft(debitAmount(transaction, amount), 10),
+                    padLeft(toCurrency(transaction.balance), 11)
             )
         }
 
@@ -54,11 +54,11 @@ class AccountSummary(val account: Account) {
     }
 
     private fun toCurrencyWhenType(transaction: Transaction, amount: Amount, requiredType: TransactionType): String {
-        var credit = ""
+        var display = ""
         if (transaction.type == requiredType) {
-            credit = toCurrency(amount.amount)
+            display = toCurrency(amount.amount)
         }
-        return credit
+        return display
     }
 
     private fun toCurrency(amount: BigDecimal): String {

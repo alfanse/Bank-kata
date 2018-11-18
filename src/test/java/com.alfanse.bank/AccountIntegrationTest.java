@@ -50,6 +50,8 @@ class AccountIntegrationTest {
             "13/01/2012  ||    2000.00 ||            ||     3000.00" + "\n" +
             "10/01/2012  ||    1000.00 ||            ||     1000.00"
         );
+
+        System.out.println(summary);
     }
 
     @NotNull
