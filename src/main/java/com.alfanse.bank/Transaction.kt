@@ -19,15 +19,16 @@ data class Amount(
 
 enum class TransactionType {
     CREDIT {
-        override fun apply(left: BigDecimal, right: Amount): BigDecimal {
-            return left + right.amount
+        override fun apply(balance: BigDecimal, amount: BigDecimal): BigDecimal {
+            return scale(balance + amount)
         }
     },
     DEBIT {
-        override fun apply(left: BigDecimal, right: Amount): BigDecimal {
-            return left - right.amount
+        override fun apply(balance: BigDecimal, amount: BigDecimal): BigDecimal {
+            return scale(balance - amount)
         }
     };
 
-    abstract fun apply(left: BigDecimal, right: Amount): BigDecimal
+    abstract fun apply(balance: BigDecimal, amount: BigDecimal): BigDecimal
+
 }

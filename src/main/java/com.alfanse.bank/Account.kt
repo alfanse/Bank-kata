@@ -1,11 +1,9 @@
 package com.alfanse.bank
 
-import java.math.BigDecimal
-
 class Account {
 
     val transactions: MutableList<Transaction> = mutableListOf()
-    var balance = BigDecimal(0)
+    var balance = currency(0.0)
 
     fun deposit(amount: Amount) {
         transact(TransactionType.CREDIT, amount)
@@ -20,8 +18,10 @@ class Account {
     }
 
     private fun transact(transactionType: TransactionType, amount: Amount) {
-        val newBalance = transactionType.apply(balance, amount)
-        this.balance = BigDecimal(newBalance.unscaledValue())
-        transactions.add(Transaction(amount, transactionType, newBalance))
+        synchronized(this) {
+            val newBalance = transactionType.apply(balance, amount.amount)
+            this.balance = newBalance
+            transactions.add(Transaction(amount, transactionType, newBalance))
+        }
     }
 }
