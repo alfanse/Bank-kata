@@ -1,16 +1,19 @@
 package com.alfanse.bank
 
+import com.alfanse.bank.TransactionType.CREDIT
+import com.alfanse.bank.TransactionType.DEBIT
+
 class Account {
 
     val transactions: MutableList<Transaction> = mutableListOf()
     var balance = currency(0.0)
 
     fun deposit(amount: Amount) {
-        transact(TransactionType.CREDIT, amount)
+        transact(CREDIT, amount)
     }
 
     fun withdraw(amount: Amount) {
-        transact(TransactionType.DEBIT, amount)
+        transact(DEBIT, amount)
     }
 
     fun transactions(): List<Transaction> {
@@ -25,11 +28,11 @@ class Account {
         }
     }
 
-    fun filterByDebits(): List<Transaction> {
-        return transactions.filter { t -> t.type == TransactionType.DEBIT }
+    fun getWithdrawals(): List<Transaction> {
+        return transactions.filter { t -> t.type == DEBIT }
     }
 
-    fun filterByCredits(): List<Transaction> {
-        return transactions.filter { t -> t.type == TransactionType.CREDIT }
+    fun getDeposits(): List<Transaction> {
+        return transactions.filter { t -> t.type == CREDIT }
     }
 }

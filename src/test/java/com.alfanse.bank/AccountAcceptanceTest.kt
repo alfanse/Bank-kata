@@ -81,12 +81,12 @@ class AccountAcceptanceTest {
 
         @Test
         fun `filtering by deposits`() {
-            assertThat(account.filterByCredits().map(Transaction::amount)).isEqualTo(asList(credit1, credit2))
+            assertThat(account.getDeposits().map(Transaction::amount)).isEqualTo(asList(credit1, credit2))
         }
 
         @Test
         fun `filtering by withdrawals`() {
-            assertThat(account.filterByDebits().map(Transaction::amount)).isEqualTo(asList(debit1, debit2))
+            assertThat(account.getWithdrawals().map(Transaction::amount)).isEqualTo(asList(debit1, debit2))
         }
     }
 
