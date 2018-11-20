@@ -20,7 +20,7 @@ internal class AccountConcurrencyTest {
     private val withdraw = 1.11
 
     @Test
-    fun manyTransactionsConcurrently(){
+    fun `concurrent transactions`(){
         val noOfTransactions = 100_000
 
         concurrently(noOfTransactions, Callable {
@@ -33,19 +33,6 @@ internal class AccountConcurrencyTest {
         )
     }
 
-    @Throws(InterruptedException::class, ExecutionException::class)
-    private fun concurrently(noOfTransactions: Int, task: Callable<Boolean>) {
-        val tasks = nCopies<Callable<Boolean>>(
-                noOfTransactions,
-                task
-        )
-
-        val futures = newFixedThreadPool(100).invokeAll(tasks)
-
-        assertThat<Future<Boolean>>(futures).hasSize(noOfTransactions)
-        flushExceptions(futures)
-    }
-
     fun credit(): Boolean {
         account.deposit(Amount(BigDecimal(deposit), LocalDateTime.now()))
         return true
@@ -54,6 +41,16 @@ internal class AccountConcurrencyTest {
     fun debit(): Boolean {
         account.withdraw(Amount(BigDecimal(withdraw), LocalDateTime.now()))
         return true
+    }
+
+    @Throws(InterruptedException::class, ExecutionException::class)
+    private fun concurrently(noOfTransactions: Int, task: Callable<Boolean>) {
+        val tasks = nCopies<Callable<Boolean>>(noOfTransactions, task)
+
+        val futures = newFixedThreadPool(100).invokeAll(tasks)
+
+        assertThat<Future<Boolean>>(futures).hasSize(noOfTransactions)
+        flushExceptions(futures)
     }
 
     @Throws(InterruptedException::class, ExecutionException::class)
