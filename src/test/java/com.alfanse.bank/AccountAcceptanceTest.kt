@@ -85,7 +85,7 @@ class AccountAcceptanceTest {
         }
 
         @Test
-        fun `filtering by withdrawls`() {
+        fun `filtering by withdrawals`() {
             assertThat(account.filterByDebits().map(Transaction::amount)).isEqualTo(asList(debit1, debit2))
         }
     }
