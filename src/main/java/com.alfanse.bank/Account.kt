@@ -24,4 +24,8 @@ class Account {
             transactions.add(Transaction(amount, transactionType, newBalance))
         }
     }
+
+    fun filterTransactionsBy(filter: (Transaction) -> Boolean): List<Transaction> {
+        return transactions.filter(filter)
+    }
 }

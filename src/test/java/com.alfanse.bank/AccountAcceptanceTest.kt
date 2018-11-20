@@ -1,8 +1,12 @@
-package com.alfanse.bank;
+package com.alfanse.bank
 
+import com.alfanse.bank.TransactionType.CREDIT
+import com.alfanse.bank.TransactionType.DEBIT
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.annotations.NotNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.math.BigDecimal
@@ -18,6 +22,11 @@ class AccountAcceptanceTest {
 
     private val account  = Account()
     private val accountSummary = AccountSummary(account)
+
+    @BeforeEach
+    internal fun setUp() {
+        account.transactions.clear()
+    }
 
     /**
      * Given a client makes:
@@ -40,7 +49,7 @@ class AccountAcceptanceTest {
         account.deposit(amount("13-01-2012", "2000"))
         account.withdraw(amount("14-01-2012", "500"))
 
-        var transactions = account.transactions()
+        val transactions = account.transactions()
 
         assertThat(transactions.map { t->t.balance }).isEqualTo(asList(
                         currency(1000.00),
@@ -54,9 +63,39 @@ class AccountAcceptanceTest {
             "13/01/2012  ||    2000.00 ||            ||     3000.00" + "\n" +
             "10/01/2012  ||    1000.00 ||            ||     1000.00"
         )
-
-        System.out.println(summary)
     }
+
+    @Nested
+    inner class Filtering {
+        val credit1 = amount("10-01-2012", "1001")
+        val debit1 = amount("11-01-2012", "501")
+        val credit2 = amount("12-01-2012", "1002")
+        val debit2 = amount("13-01-2012", "502")
+
+        @BeforeEach
+        internal fun setUp() {
+            //given transactions
+            account.deposit(credit1)
+            account.withdraw(debit1)
+            account.deposit(credit2)
+            account.withdraw(debit2)
+        }
+
+        @Test
+        fun `filtering by deposits`() {
+            val credits = whenFilteringTransactionsBy { t -> t.type == CREDIT }
+            assertThat(credits).isEqualTo(asList(credit1, credit2))
+        }
+
+        @Test
+        fun `filtering by withdrawls`() {
+            val debits = whenFilteringTransactionsBy { t -> t.type == DEBIT }
+            assertThat(debits).isEqualTo(asList(debit1, debit2))
+        }
+
+        private fun whenFilteringTransactionsBy(filter: (Transaction) -> Boolean) = account.filterTransactionsBy(filter).map(Transaction::amount)
+    }
+
 
     @NotNull
     private fun amount(date: String, amount: String): Amount  {
