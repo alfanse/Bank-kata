@@ -25,7 +25,11 @@ class Account {
         }
     }
 
-    fun filterTransactionsBy(filter: (Transaction) -> Boolean): List<Transaction> {
-        return transactions.filter(filter)
+    fun filterByDebits(): List<Transaction> {
+        return transactions.filter { t -> t.type == TransactionType.DEBIT }
+    }
+
+    fun filterByCredits(): List<Transaction> {
+        return transactions.filter { t -> t.type == TransactionType.CREDIT }
     }
 }

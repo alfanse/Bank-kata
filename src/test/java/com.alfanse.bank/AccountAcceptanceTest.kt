@@ -1,7 +1,5 @@
 package com.alfanse.bank
 
-import com.alfanse.bank.TransactionType.CREDIT
-import com.alfanse.bank.TransactionType.DEBIT
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.annotations.NotNull
@@ -83,17 +81,13 @@ class AccountAcceptanceTest {
 
         @Test
         fun `filtering by deposits`() {
-            val credits = whenFilteringTransactionsBy { t -> t.type == CREDIT }
-            assertThat(credits).isEqualTo(asList(credit1, credit2))
+            assertThat(account.filterByCredits().map(Transaction::amount)).isEqualTo(asList(credit1, credit2))
         }
 
         @Test
         fun `filtering by withdrawls`() {
-            val debits = whenFilteringTransactionsBy { t -> t.type == DEBIT }
-            assertThat(debits).isEqualTo(asList(debit1, debit2))
+            assertThat(account.filterByDebits().map(Transaction::amount)).isEqualTo(asList(debit1, debit2))
         }
-
-        private fun whenFilteringTransactionsBy(filter: (Transaction) -> Boolean) = account.filterTransactionsBy(filter).map(Transaction::amount)
     }
 
 
