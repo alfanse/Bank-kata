@@ -1,38 +1,36 @@
 package com.alfanse.bank
 
-import com.alfanse.bank.TransactionType.CREDIT
-import com.alfanse.bank.TransactionType.DEBIT
-
 class Account {
 
     val transactions: MutableList<Transaction> = mutableListOf()
-    var balance = currency(0.0)
+
+    var currentBalance = currency(0.0)
 
     fun deposit(amount: Amount) {
-        transact(CREDIT, amount)
+        synchronized(this) {
+            val credit = Credit(amount, currentBalance)
+            currentBalance = credit.balance
+            transactions.add(credit)
+        }
     }
 
     fun withdraw(amount: Amount) {
-        transact(DEBIT, amount)
+        synchronized(this) {
+            val debit = Debit(amount, currentBalance)
+            currentBalance = debit.balance
+            transactions.add(debit)
+        }
     }
 
     fun transactions(): List<Transaction> {
         return transactions
     }
 
-    private fun transact(transactionType: TransactionType, amount: Amount) {
-        synchronized(this) {
-            val newBalance = transactionType.apply(balance, amount.amount)
-            this.balance = newBalance
-            transactions.add(Transaction(amount, transactionType, newBalance))
-        }
-    }
-
     fun getWithdrawals(): List<Transaction> {
-        return transactions.filter { t -> t.type == DEBIT }
+        return transactions.filter(Transaction::isDebit)
     }
 
     fun getDeposits(): List<Transaction> {
-        return transactions.filter { t -> t.type == CREDIT }
+        return transactions.filter(Transaction::isCredit)
     }
 }

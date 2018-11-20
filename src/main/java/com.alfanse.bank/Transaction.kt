@@ -1,34 +1,34 @@
 package com.alfanse.bank
 
 import java.math.BigDecimal
-import java.time.LocalDateTime
 
+abstract class Transaction(val amount: Amount, startBalance: BigDecimal) {
 
-data class Transaction(
-        val amount: Amount,
-        val type: TransactionType,
-        val balance: BigDecimal
-)
+    val balance: BigDecimal = recordNewBalance(startBalance)
 
+    abstract fun type(): TransactionType
 
-data class Amount(
-        val amount: BigDecimal,
-        val date: LocalDateTime
-)
+    fun isCredit(): Boolean {
+        return TransactionType.CREDIT == type()
+    }
 
+    fun isDebit(): Boolean {
+        return TransactionType.DEBIT == type()
+    }
 
-enum class TransactionType {
-    CREDIT {
-        override fun apply(balance: BigDecimal, amount: BigDecimal): BigDecimal {
-            return scale(balance + amount)
-        }
-    },
-    DEBIT {
-        override fun apply(balance: BigDecimal, amount: BigDecimal): BigDecimal {
-            return scale(balance - amount)
-        }
-    };
+    private fun recordNewBalance(balance: BigDecimal): BigDecimal {
+        return type().apply(balance, amount.amount)
+    }
+}
 
-    abstract fun apply(balance: BigDecimal, amount: BigDecimal): BigDecimal
+class Credit (amount: Amount, startBalance: BigDecimal) : Transaction(amount, startBalance) {
+    override fun type(): TransactionType {
+        return TransactionType.CREDIT
+    }
+}
 
+class Debit (amount: Amount, startBalance: BigDecimal) : Transaction(amount, startBalance) {
+    override fun type(): TransactionType {
+        return TransactionType.DEBIT
+    }
 }

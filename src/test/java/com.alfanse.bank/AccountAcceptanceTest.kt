@@ -35,7 +35,7 @@ class AccountAcceptanceTest {
      * When she prints her bank statement
      *
      * Then she would see
-     * date       || credit   || debit    || balance
+     * date       || credit   || debit    || currentBalance
      * 14/01/2012 ||          || 500.00   || 2500.00
      * 13/01/2012 || 2000.00  ||          || 3000.00
      * 10/01/2012 || 1000.00  ||          || 1000.00
@@ -92,7 +92,7 @@ class AccountAcceptanceTest {
 
 
     @NotNull
-    private fun amount(date: String, amount: String): Amount  {
+    private fun amount(date: String, amount: String): Amount {
         return Amount(BigDecimal(amount), date(date))
     }
 

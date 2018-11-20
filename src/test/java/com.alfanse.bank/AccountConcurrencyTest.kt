@@ -28,7 +28,7 @@ internal class AccountConcurrencyTest {
             debit()
         })
 
-        assertThat(account.balance).isEqualTo(
+        assertThat(account.currentBalance).isEqualTo(
             currency(deposit * noOfTransactions - withdraw *noOfTransactions)
         )
     }

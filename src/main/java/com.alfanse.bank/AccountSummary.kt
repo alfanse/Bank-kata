@@ -2,8 +2,8 @@ package com.alfanse.bank
 
 import java.lang.String.format
 import java.math.BigDecimal
-import java.time.format.DateTimeFormatter
 import java.text.DecimalFormat
+import java.time.format.DateTimeFormatter
 
 private val summaryFormat = "%s || %s || %s || %s"
 
@@ -37,28 +37,27 @@ class AccountSummary(val account: Account) {
         val amount = transaction.amount
         return format(summaryFormat,
                     padRight(dateWhen(amount), 11),
-                    padLeft(creditAmount(transaction, amount), 10),
-                    padLeft(debitAmount(transaction, amount), 10),
+                    padLeft(creditAmount(transaction), 10),
+                    padLeft(debitAmount(transaction), 10),
                     padLeft(toCurrency(transaction.balance), 11)
             )
         }
 
     private fun dateWhen(amount: Amount) = dateFormat.format(amount.date)
 
-    private fun debitAmount(transaction: Transaction, amount: Amount): String {
-        return toCurrencyWhenType(transaction, amount, TransactionType.DEBIT)
+    private fun debitAmount(transaction: Transaction): String {
+        return toCurrencyWhenType(transaction, TransactionType.DEBIT)
     }
 
-    private fun creditAmount(transaction: Transaction, amount: Amount): String {
-        return toCurrencyWhenType(transaction, amount, TransactionType.CREDIT)
+    private fun creditAmount(transaction: Transaction): String {
+        return toCurrencyWhenType(transaction, TransactionType.CREDIT)
     }
 
-    private fun toCurrencyWhenType(transaction: Transaction, amount: Amount, requiredType: TransactionType): String {
-        var display = ""
-        if (transaction.type == requiredType) {
-            display = toCurrency(amount.amount)
+    private fun toCurrencyWhenType(transaction: Transaction, requiredType: TransactionType): String {
+        if (transaction.type() == requiredType) {
+            return toCurrency(transaction.amount.amount)
         }
-        return display
+        return ""
     }
 
     private fun toCurrency(amount: BigDecimal): String {
