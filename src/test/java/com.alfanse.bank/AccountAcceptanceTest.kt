@@ -23,7 +23,7 @@ class AccountAcceptanceTest {
 
     @BeforeEach
     internal fun setUp() {
-        account.transactions.clear()
+        account.reset()
     }
 
     /**
@@ -47,15 +47,12 @@ class AccountAcceptanceTest {
         account.deposit(amount("13-01-2012", "2000"))
         account.withdraw(amount("14-01-2012", "500"))
 
-        val transactions = account.transactions()
-
-        assertThat(transactions.map { t->t.balance }).isEqualTo(asList(
+        assertThat(account.balanceHistory()).isEqualTo(asList(
                         currency(1000.00),
                         currency(3000.00),
                         currency(2500.00)))
 
-        val summary = accountSummary.summary()
-        Assertions.assertThat(summary).isEqualTo(
+        Assertions.assertThat(accountSummary.summary()).isEqualTo(
             "date        || credit     || debit      || balance    " + "\n" +
             "14/01/2012  ||            ||     500.00 ||     2500.00" + "\n" +
             "13/01/2012  ||    2000.00 ||            ||     3000.00" + "\n" +

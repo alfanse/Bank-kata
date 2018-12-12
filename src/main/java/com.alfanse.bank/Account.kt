@@ -1,9 +1,10 @@
 package com.alfanse.bank
 
+import java.math.BigDecimal
+
 class Account {
 
-    val transactions: MutableList<Transaction> = mutableListOf()
-
+    val transactions: Transactions = Transactions()
     var currentBalance = currency(0.0)
 
     fun deposit(amount: Amount) {
@@ -22,8 +23,8 @@ class Account {
         }
     }
 
-    fun transactions(): List<Transaction> {
-        return transactions
+    fun balanceHistory(): List<BigDecimal> {
+        return transactions.balances()
     }
 
     fun getWithdrawals(): List<Transaction> {
@@ -32,5 +33,10 @@ class Account {
 
     fun getDeposits(): List<Transaction> {
         return transactions.filter(Transaction::isCredit)
+    }
+
+    fun reset() {
+        transactions.clear()
+        currentBalance = currency(0.0)
     }
 }
