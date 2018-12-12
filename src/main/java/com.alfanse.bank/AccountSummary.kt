@@ -55,9 +55,13 @@ class AccountSummary(val account: Account) {
 
     private fun toCurrencyWhenType(transaction: Transaction, requiredType: TransactionType): String {
         if (transaction.type() == requiredType) {
-            return toCurrency(transaction.amount.amount)
+            return toCurrency(transaction.amount)
         }
         return ""
+    }
+
+    private fun toCurrency(amount: Amount): String {
+        return toCurrency(amount.amount)
     }
 
     private fun toCurrency(amount: BigDecimal): String {
